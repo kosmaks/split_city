@@ -22,3 +22,5 @@
 
 # Temp files
 .DS_Store
+.unicorn.sock
+unicorn.pid
