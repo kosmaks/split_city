@@ -9,9 +9,10 @@ Split City
 Как запустить
 -------------
 
-Для запуска требуется [MongoDB](http://www.mongodb.org). После установки как обычное rails приложение:
+Для запуска требуется [MongoDB](http://www.mongodb.org) и ruby (>2.0.0). После установки как обычное rails приложение:
 
 ```bash
+$ gem install bundler
 $ bundle install
 $ rails s
 ```
