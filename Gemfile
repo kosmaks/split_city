@@ -46,3 +46,5 @@ end
 
 # Use bootstrap
 gem 'bootstrap-sass', '~> 3.1.1'
+
+gem "mongoid", github: 'mongoid/mongoid'
