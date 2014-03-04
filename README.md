@@ -15,3 +15,10 @@ $ gem install bundler
 $ bundle install
 $ rails s
 ```
+
+Авторы
+------
+
+* Мария Скрынник
+* Костюченко Максим
+* Соло Илья
