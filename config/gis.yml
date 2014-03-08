@@ -1,0 +1,14 @@
+defaults: &defaults
+  fsq:
+    client_id: 'JNRXYKQT43TJOOL4KM2BBRBETTG04F3IMBWMSAQELFGQMZYJ'
+    client_secret: 'XURYXPJ5S4GTLFOBJVM4XQLGJJCUHU4COBIX4KSCQQ1TZJHD'
+    api_version: '20140407'
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+prodution:
+  <<: *defaults

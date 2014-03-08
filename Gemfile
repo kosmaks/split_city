@@ -48,3 +48,6 @@ end
 gem 'bootstrap-sass', '~> 3.1.1'
 
 gem "mongoid", github: 'mongoid/mongoid'
+
+gem 'faraday', '~> 0.8.9'
+gem 'foursquare2', '~> 1.9.8'
