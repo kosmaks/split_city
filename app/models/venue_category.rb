@@ -1,9 +1,7 @@
 class VenueCategory
   include Mongoid::Document
 
-  belongs_to :parent, :class_name => "VenueCategory"
-  has_many   :childs, :class_name => "VenueCategory"
+  embeds_one :fsq_venue_category
 
   field :name, type: String, default: ""
-  field :hash, type: String, default: ""
 end
