@@ -1,7 +1,7 @@
 class Venue
   include Mongoid::Document
 
-  has_many :categories, :class_name => "VenueCategory"
+  has_and_belongs_to_many :categories, :class_name => "VenueCategory"
 
   field :name, type: String
 
