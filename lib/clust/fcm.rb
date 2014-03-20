@@ -13,40 +13,52 @@ module Clust
         @point = Vector.elements [point].flatten
         @coef  = coef
       end
-
-      def u k
-        @coef[k]
-      end
-
-      def update_u k, center
-      end
-
-      def dist point
-        Math.sqrt(
-          @point.zip(point)
-                .map { |x, y| (x - y) ** 2 }
-                .sum
-        )
-      end
     end
 
     attr_reader :num_of_clust, :points
 
     def initialize data, num_of_clust, params={}
       @m = params[:m] || 2
+      @e = params[:e] || 1e-4
+      @mpower = 2 / (@m - 1)
       @num_of_clust = num_of_clust
       @points = data.map { |x| Point.new x, randomize }
     end
 
     def run
-      center 0
+
+      while true do
+        oldcoef = @points.map(&:coef).flatten
+        normalize
+        newcoef = @points.map(&:coef).flatten
+        err = newcoef.zip(oldcoef).map { |x, y| (x - y).abs }.max
+        break if err <= @e
+      end
+
+      @points.map(&:coef)
+    end
+
+    def normalize
+      centers = current_centers
+      @points.each do |p|
+        @num_of_clust.times do |k|
+          p.coef[k] = 1 / @num_of_clust.times.map do |j|
+            ((centers[k] - p.point).r / 
+             (centers[j] - p.point).r) ** @mpower
+          end.sum
+        end
+      end
     end
 
     private
 
+    def current_centers
+      @num_of_clust.times.map { |clust| center clust }
+    end
+
     def center k
-      weights = points.map { |p| p.u(k) ** @m }.sum
-      points.map { |p| p.point * (p.u(k) ** @m) }
+      weights = points.map { |p| p.coef[k] ** @m }.sum
+      points.map { |p| p.point * (p.coef[k] ** @m) }
             .inject(:+) / weights
     end
 

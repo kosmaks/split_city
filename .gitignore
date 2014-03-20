@@ -18,6 +18,7 @@
 # Vim files
 *.swp
 *.swn
+*.swm
 *.swo
 
 # Temp files
