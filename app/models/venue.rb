@@ -9,4 +9,6 @@ class Venue
 
   field :lat,  type: Float
   field :lng,  type: Float
+
+  field :coef, type: Array, default: []
 end

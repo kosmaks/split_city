@@ -1,15 +1,24 @@
 class ZoningController < ApplicationController
   def debug
-    venues = Venue.all.limit(10).to_a
 
-
-    result = Test.run_fcm
-    result = Test.all
-    #result = Clust::FCM.new([1, 2, 7, 8, 9], 2).run
+    result = []
+    #result = {
+      #venues: Venue.all,
+      #centers: centers
+    #}
+    
+    #result = Venue.all.map { |x| [x.lat, x.lng] }
+    #result = Clust::FCM.new(result, 8).run
 
     respond_to do |format|
       format.json { render json: result }
       format.xml  { render xml:  result }
+    end
+  end
+
+  def index
+    respond_to do |format|
+      format.json { render json: Venue.all }
     end
   end
 end

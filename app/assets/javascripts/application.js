@@ -11,6 +11,8 @@
 // about supported directives.
 //
 //= require jquery
+//= require avs
+//= require shader_fcm
 //= require underscore
 //= require jquery_ujs
 //= require turbolinks
