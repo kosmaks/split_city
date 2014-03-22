@@ -49,11 +49,11 @@ $ -> ymaps.ready ->
   receiveVenues (venues) ->
 
     fcm.configure {
-      clust: 64
+      clust: 16
       data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
     }
 
-    for i in [0...1000]
+    for i in [0...500]
       fcm.improve()
 
     weights = fcm.getWeights()
