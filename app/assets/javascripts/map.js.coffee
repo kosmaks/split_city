@@ -1,4 +1,5 @@
 $ -> ymaps.ready ->
+  return
   map = new ymaps.Map "map", {
     center: [55.156150, 61.409150]
     zoom: 13
@@ -19,7 +20,6 @@ $ -> ymaps.ready ->
       when '6' then "twirl#night#{type}Icon"
       when '7' then "twirl#black#{type}Icon"
 
-  #return
 
   $.ajax {
     url: 'zoning/debug'
