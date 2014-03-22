@@ -7,6 +7,7 @@ $ ->
     while array.length < (x*x) then array.push [0, 0, 0, 0]
 
     #startAvs [x, x], _.flatten(array)
+    return
     startAvs [2, 2], [0.1, 0.0, 0.0, 0.0,
                       0.1, 0.0, 0.0, 0.0,
                       0.2, 0.0, 0.0, 0.0,
@@ -188,13 +189,13 @@ startAvs = (size = [16, 16], data = []) ->
   avs.pass fillProg, initBuf, data: dataBuf.texture
   avs.pass randProg, clust1Buf
 
-  #trig = false
+  trig = false
 
   for x in [1..1]
     inBuf = if trig then clust2Buf else clust1Buf
     outBuf = if trig then clust1Buf else clust2Buf
     avs.pass weightsProg, weightsBuf, clust: inBuf.texture, data: initBuf.texture
-    outBuf = weightsBuf
+    outBuf = clust1Buf
     #avs.pass sumProg, centersBuf, weights: weightsBuf.texture
     #avs.pass normalizeProg, outBuf, centers: centersBuf.texture, data: dataBuf.texture
     trig = not trig
