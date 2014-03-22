@@ -18,6 +18,11 @@ indexToIcon = (index, type='') ->
 # program entry
 $ -> ymaps.ready ->
 
+  map = new ymaps.Map "map", {
+    center: [55.156150, 61.409150]
+    zoom: 13
+  }
+
   fcm = new ShaderFCM $("#display")[0]
 
   receiveVenues (venues) ->
@@ -27,8 +32,23 @@ $ -> ymaps.ready ->
     }
 
     fcm.improve()
+    fcm.improve()
+    fcm.improve()
+    fcm.improve()
 
-  #map = new ymaps.Map "map", {
-    #center: [55.156150, 61.409150]
-    #zoom: 13
-  #}
+    weights = fcm.getWeights()
+
+    for i, venue of venues
+
+      cluster = 0
+      maxVal = 0
+      for j, weight of weights[i]
+        if weight > maxVal
+          maxVal = weight
+          cluster = j
+
+      mark = new ymaps.Placemark [venue.lat, venue.lng], {}, {
+        preset: indexToIcon(cluster)
+      }
+      map.geoObjects.add mark
+
