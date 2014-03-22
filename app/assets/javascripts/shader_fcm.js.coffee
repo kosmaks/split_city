@@ -1,61 +1,72 @@
-$ -> ymaps.ready ->
-  map = new ymaps.Map "map", {
-    center: [55.156150, 61.409150]
-    zoom: 10
+class window.ShaderFCM
+
+  fixedSize = 10
+  texVertex = """
+  attribute vec2 vertex;
+  varying vec2 index;
+
+  void main() {
+    index.x = (vertex.x > 0.) ? 1. : 0.;
+    index.y = (vertex.y > 0.) ? 1. : 0.;
+    gl_Position = vec4(vertex, 0., 1.);
+  }
+  """
+
+  # initializer data
+  avs  = null
+  data = null
+  size = null
+  conf = {}
+
+  # programs
+  mainProg      = null
+  weightsProg   = null
+  sumProg       = null
+  normalizeProg = null
+
+  # buffers
+  initBuf     = null
+  doubleBuffers = {
+    clust1:   null
+    clust2:   null
+    weights1: null
+    weights2: null
+    centers1: null
+    centers2: null
   }
 
-  coefToIcon = (coef, type='') ->
-    index = _.sortBy(_.pairs(coef), (x) -> -x[1])[0][0]
-    indexToIcon index, type
+  # sizes
+  clustNodeSize = -> size[0] * conf.clust
+  clustNodeBufSize = -> [clustNodeSize(), size[1]]
+  clustBufSize = -> [conf.clust, 1]
 
-  indexToIcon = (index, type='') ->
-    switch "#{index}"
-      when '0' then "twirl#blue#{type}Icon"
-      when '1' then "twirl#red#{type}Icon"
-      when '2' then "twirl#green#{type}Icon"
-      when '3' then "twirl#orange#{type}Icon"
-      when '4' then "twirl#pink#{type}Icon"
-      when '5' then "twirl#gray#{type}Icon"
-      when '6' then "twirl#night#{type}Icon"
-      when '7' then "twirl#black#{type}Icon"
+  # shader helpers
+  fix = (x) -> x.toFixed fixedSize
+  clustNode = -> fix clustNodeSize()
+  sizex     = -> fix size[0]
+  sizey     = -> fix size[1]
+  clust     = -> fix conf.clust
+  m         = -> fix conf.m
+  mpow      = -> fix (2.0 / (conf.m - 1.0))
 
-  $.get 'zoning/index', {}, (venues) ->
+  # runtime
+  trig = false
 
-    length = venues.length
+  constructor: (elem, options = {}) ->
+    avs = new AVS elem
+
+  configure: (options = {}) ->
+    conf.m     = options.m ? 2.0
+    conf.clust = options.clust ? 4
+    array      = options.data ? []
+    length     = array.length
+
+    # align to power of 2
     x = 1
     while x*x < length then x *= 2
-    array = _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
     while array.length < (x*x) then array.push [0, 0, 1.0, 0]
-
     size = [x, x]
     data = _.flatten(array)
-    #size = [4, 1]
-    #data = [0.1, 0.0, 0.0, 0.0,
-            #0.1, 0.0, 0.0, 0.0,
-            #0.1, 0.9, 0.0, 0.0,
-            #0.1, 0.9, 0.0, 0.0]
-
-
-    avs = new AVS document.getElementById('display')
-
-    sizeM = size[0] * size[1]
-    sizex = "#{size[0]}.0"
-    sizey = "#{size[1]}.0"
-
-    m     = 2.0
-    mpow  = 2.0 / (m - 1)
-    clust = 8
-
-    texVertex = """
-    attribute vec2 vertex;
-    varying vec2 index;
-
-    void main() {
-      index.x = (vertex.x > 0.) ? 1. : 0.;
-      index.y = (vertex.y > 0.) ? 1. : 0.;
-      gl_Position = vec4(vertex, 0., 1.);
-    }
-    """
 
     mainProg = avs.createProgram {
       vertex: texVertex
@@ -84,7 +95,7 @@ $ -> ymaps.ready ->
         vec3 data = texture2D(data, index).xyz;
         vec2 point = data.xy;
 
-        float denum = pow(weight, #{m}.);
+        float denum = pow(weight, #{m()});
 
         gl_FragColor = vec4(point * denum, denum, data.z);
       }
@@ -100,16 +111,16 @@ $ -> ymaps.ready ->
       varying vec2 index;
 
       void main() {
-        float clust = floor(index.x * #{clust}.);
-        float delta = #{(1.0 / (size[0] * clust))} * clust;
+        float clust = floor(index.x * #{clust()});
+        float delta = #{fix(1.0 / clustNodeSize())} * clust;
 
         vec2 vecs = vec2(0., 0.);
         float w = 0.;
 
         float c = 0.;
-        for (float i = 0.; i < #{sizex}; i += 1.)
-        for (float j = 0.; j < #{sizey}; j += 1.) {
-          vec2 cellPos = vec2(i / #{sizex}, j / #{sizey});
+        for (float i = 0.; i < #{sizex()}; i += 1.)
+        for (float j = 0.; j < #{sizey()}; j += 1.) {
+          vec2 cellPos = vec2(i / #{sizex()}, j / #{sizey()});
           cellPos.x += delta;
           vec4 point = texture2D(weights, cellPos);
           if (point.w > 0.5) continue;
@@ -140,16 +151,16 @@ $ -> ymaps.ready ->
         vec4 data = texture2D(data, index);
         if (data.z > 0.5) return;
 
-        float clusterId = floor(mod(index.x * #{size[0] * clust}., #{clust}.));
+        float clusterId = floor(mod(index.x * #{clustNode()}, #{clust()}));
 
         vec2 point = data.xy;
-        vec2 center = texture2D(centers, vec2(clusterId / #{clust}., 0.5)).xy;
+        vec2 center = texture2D(centers, vec2(clusterId / #{clust()}, 0.5)).xy;
 
         float disti = distance(point, center);
         float sum = 0.;
 
-        for (float k = 0.; k < #{clust}.; k += 1.) {
-          vec2 pos = vec2(k / #{clust}., 0.5);
+        for (float k = 0.; k < #{clust()}; k += 1.) {
+          vec2 pos = vec2(k / #{clust()}, 0.5);
           vec2 relCenter = texture2D(centers, pos).xy;
           float distj = distance(point, relCenter);
           sum += pow(disti / distj, 2.);
@@ -163,89 +174,86 @@ $ -> ymaps.ready ->
       """
     }
 
+    initBuf = avs.createFramebuffer {
+      size: size,
+      data: new Float32Array(data)
+    }
+
+    doubleBuffers['clust1'] = avs.createFramebuffer {
+      size: clustNodeBufSize(),
+      data: new Float32Array(@generateRandomWeights())
+    }
+
+    doubleBuffers['clust2']   = avs.createFramebuffer size: clustNodeBufSize()
+    doubleBuffers['weights1'] = avs.createFramebuffer size: clustNodeBufSize()
+    doubleBuffers['weights2'] = avs.createFramebuffer size: clustNodeBufSize()
+    doubleBuffers['centers1'] = avs.createFramebuffer size: clustBufSize()
+    doubleBuffers['centers2'] = avs.createFramebuffer size: clustBufSize()
+
+    trig = false
+
+  improve: ->
+    avs.pass weightsProg, @getOutBuf('weights'), {
+      backbuffer: @getInBuf('weights').texture,
+      clust: @getInBuf('clust').texture,
+      data: initBuf.texture
+    }
+    avs.pass sumProg, @getOutBuf('centers'), {
+      backbuffer: @getInBuf('centers').texture,
+      weights: @getOutBuf('weights').texture
+    }
+    avs.pass normalizeProg, @getOutBuf('clust'), {
+      centers: @getOutBuf('centers').texture,
+      data: initBuf.texture
+    }
+    trig = not trig
+
+  getOutBuf: (category) ->
+    num = if trig then 1 else 2
+    doubleBuffers["#{category}#{num}"]
+
+  getInBuf: (category) ->
+    num = if trig then 2 else 1
+    doubleBuffers["#{category}#{num}"]
+
+  getWeights: (data) ->
+    result  = []
+    weights = avs.readPixels(@getOutBuf('clust'))
+    clust   = 0
+    buffer  = []
+    for x in weights by 4
+      buffer.push x / 255.0
+      if clust == 3
+        result.push buffer
+        buffer = []
+        clust  = 0
+      else
+        clust += 1
+    result
+
+  generateRandomWeights: ->
     randomData = []
     for x in [0...size[0]]
       for y in [0...size[1]]
         sum = 1.0
-        for k in [0...clust-1]
+        for k in [0...(conf.clust - 1)]
           perc = Math.random() * sum
           if perc > sum then perc = sum
           randomData.push perc
-          randomData.push 0.0
-          randomData.push 0.0
-          randomData.push 0.0
+          randomData.push 0
+          randomData.push 0
+          randomData.push 0
           sum -= perc
         randomData.push sum
-        randomData.push 0.0
-        randomData.push 0.0
-        randomData.push 0.0
+        randomData.push 0
+        randomData.push 0
+        randomData.push 0
+    randomData
 
-    initBuf    = avs.createFramebuffer size: size, data: new Float32Array(data)
-    clust1Buf  = avs.createFramebuffer size: [size[0] * clust, size[1]], data: new Float32Array(randomData)
-    clust2Buf  = avs.createFramebuffer size: [size[0] * clust, size[1]]
-    weights1Buf = avs.createFramebuffer size: [size[0] * clust, size[1]]
-    weights2Buf = avs.createFramebuffer size: [size[0] * clust, size[1]]
-    centers1Buf = avs.createFramebuffer size: [clust, 1]
-    centers2Buf = avs.createFramebuffer size: [clust, 1]
+  readBuffer: (buf) ->
+    avs.readPixels buf
 
-    trig = false
-    clustIn    = null
-    weightsIn  = null
-    centersIn  = null
-    clustOut   = null
-    weightsOut = null
-    centersOut = null
-
-    objects = []
-
-    #setInterval(->
-    for i in [0..20]
-      clustIn    = if trig then clust2Buf   else clust1Buf
-      clustOut   = if trig then clust1Buf   else clust2Buf
-      centersIn  = if trig then centers2Buf else centers1Buf
-      centersOut = if trig then centers1Buf else centers2Buf
-      weightsIn  = if trig then weights2Buf else weights1Buf
-      weightsOut = if trig then weights1Buf else weights2Buf
-
-      inBuf = if trig then clust2Buf else clust1Buf
-      outBuf = if trig then clust1Buf else clust2Buf
-      avs.pass weightsProg,   weightsOut, backbuffer: weightsIn.texture,  clust: clustIn.texture,      data: initBuf.texture
-      avs.pass sumProg,       centersOut, backbuffer: centersIn.texture,  weights: weightsOut.texture
-      avs.pass normalizeProg, clustOut,   centers:    centersOut.texture, data: initBuf.texture
-      trig = not trig
-
-      avs.useProgram mainProg, (prog) ->
-        avs.clear()
-        avs.useTexture clustOut.texture
-        prog.drawDisplay()
-
-      weights = avs.readPixels(clustOut)
-      count = 0
-      out = ""
-
-      #for i in [0...weights.length]
-        #out += (weights[i] / 255).toFixed(4) + "\t"
-        #if count == 3
-          #console.log out
-          #out = ""
-          #count = 0
-        #else
-          #count += 1
-      #console.log '- - -'
-
-    for i in [0...venues.length]
-      max = 0
-      cluster = 0
-
-      for k in [0...clust]
-        val = weights[4 * (i * clust + k)]
-        if val > max
-          cluster = k
-          max = val
-
-      mark = new ymaps.Placemark [venues[i].lat, venues[i].lng], {}, {
-        preset: indexToIcon(cluster)
-      }
-      objects.push mark
-      map.geoObjects.add mark
-      #, 1000)
+  debugOutputWeights: ->
+    for weights in @getWeights()
+      console.log _.map(weights, (x) -> x.toFixed(4)).join('\t')
+    console.log '---'
