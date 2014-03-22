@@ -71,6 +71,6 @@ test:
 production:
   sessions:
     default:
-      database: split_city_production
+      database: split_city_development
       hosts:
         - localhost:27017
