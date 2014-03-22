@@ -2,8 +2,8 @@ module Mongoid
   class FCM
     def initialize params={}
       @m       = params[:m]               || 2.0
-      @e       = params[:e]               || 1e-4
-      @clust   = params[:num_of_clusters] || 8
+      @e       = params[:e]               || 1e-1
+      @clust   = params[:num_of_clusters] || 3
       @elem    = params[:element]
       @result  = params[:result]
 

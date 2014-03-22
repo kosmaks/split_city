@@ -29,7 +29,7 @@ $ -> ymaps.ready ->
     success: (data) ->
       for venue in data.venues
         mark = new ymaps.Placemark [venue.lat, venue.lng], {}, {
-          preset: coefToIcon(venue.coef)
+          preset: coefToIcon(venue.weights)
         }
         map.geoObjects.add mark
 
