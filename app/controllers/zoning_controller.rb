@@ -1,11 +1,12 @@
 class ZoningController < ApplicationController
   def debug
 
-    result = []
-    #result = {
-      #venues: Venue.all,
-      #centers: centers
-    #}
+    fcm = Mongoid::FCM.new element: Venue, result: Cluster
+
+    result = {
+      venues: fcm.run.map(&:value),
+      centers: fcm.compute_centers
+    }
     
     #result = Venue.all.map { |x| [x.lat, x.lng] }
     #result = Clust::FCM.new(result, 8).run

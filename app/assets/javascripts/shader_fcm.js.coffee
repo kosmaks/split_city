@@ -7,7 +7,6 @@ $ ->
     while array.length < (x*x) then array.push [0, 0, 0, 0]
 
     #startAvs [x, x], _.flatten(array)
-    return
     startAvs [2, 2], [0.1, 0.0, 0.0, 0.0,
                       0.1, 0.0, 0.0, 0.0,
                       0.2, 0.0, 0.0, 0.0,

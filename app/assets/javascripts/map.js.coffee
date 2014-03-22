@@ -19,6 +19,8 @@ $ -> ymaps.ready ->
       when '6' then "twirl#night#{type}Icon"
       when '7' then "twirl#black#{type}Icon"
 
+  return
+
   $.ajax {
     url: 'zoning/debug'
     method: 'GET'
