@@ -22,6 +22,7 @@ class window.Bitonic
 
   \#define TO_PIX(vec) vec2(X_TO_PIX(vec.x), Y_TO_PIX(vec.y))
   \#define TO_TEX(vec) vec2(X_TO_TEX(vec.x), Y_TO_TEX(vec.y))
+  \#define EPS (0.0000001)
 
   vec2 coordShift(float shift, vec2 src) {
     vec2 index = TO_PIX(src);
@@ -31,6 +32,18 @@ class window.Bitonic
     if (indexY > #{sizey()}) indexY -= #{sizey()};
     else if (indexY < 0.) indexY += #{sizey()};
     return TO_TEX(vec2(indexX, indexY));
+  }
+
+  float comparator(vec3 origin, vec4 left, vec4 right) {
+      if (left.w > 0.5) {
+        return (right.w > 0.5) ? 0.0 : -1.0;
+      } else if (right.w > 0.5) {
+        return 1.0;
+      } else {
+        left.z = 0.0;
+        right.z = 0.0;
+        return cross(left.xyz - origin, right.xyz - origin).z;
+      }
   }
 
   \#define DIR_CMP(forward, a, b) (forward == (a < b) ? a : b)
@@ -61,15 +74,19 @@ class window.Bitonic
     avs = options.avs ? new AVS options.elem
 
   configure: (options = {}) ->
-    size = [2, 2]
+    size = [4, 2]
 
     buffer1 = avs.createFramebuffer {
       size: size,
       data: new Float32Array([
-        0.5, 0, 0, 0,
-        0.3, 0, 0, 0,
-        0.8, 0, 0, 0,
-        0.1, 0, 0, 0,
+        0.2, 0.0, 0.1, 0,
+        0.2, 1.0, 0.2, 0,
+        0.3, 0.7, 0.3, 0,
+        0.7, 0.5, 0.4, 1,
+        0.3, 0.7, 0.5, 0,
+        0.3, 0.7, 0.6, 0,
+        0.9, 0.5, 0.7, 1,
+        0.0, 0.5, 0.8, 0,
       ])
     }
     buffer2 = avs.createFramebuffer {
@@ -95,12 +112,15 @@ class window.Bitonic
         bool even = mod(floor(curr / spread), 2.) == 0.;
         vec2 bCoord = coordShift((even ? 1. : -1.) * spread, index);
 
-        float a = current.x;
-        float b = texture2D(src, bCoord).x;
+        vec3 origin = vec3(0, 0.5, 0);
+        vec4 a = current;
+        vec4 b = texture2D(src, bCoord);
+        float c = comparator(origin, a, b);
 
-        // fill result
-        gl_FragColor = current;
-        gl_FragColor.x = DIR_CMP(even, a, b);
+        bool cPos = c > 0.;
+        gl_FragColor = (c >= -EPS && c <= EPS) 
+                     ? current
+                     : (even == cPos) ? a : b;
       }
       """
     }
@@ -125,12 +145,15 @@ class window.Bitonic
         float shift = (blockSize - 1.) - (2. * mod(curr, blockSize));
         vec2 bCoord = coordShift(shift, index);
 
-        float a = current.x;
-        float b = texture2D(src, bCoord).x;
+        vec3 origin = vec3(0, 0.5, 0);
+        vec4 a = current;
+        vec4 b = texture2D(src, bCoord);
+        float c = comparator(origin, a, b);
 
-        // fill result
-        gl_FragColor = current;
-        gl_FragColor.x = DIR_CMP(even, a, b);
+        bool cPos = c > 0.;
+        gl_FragColor = (c >= -EPS && c <= EPS) 
+                     ? current
+                     : (even == cPos) ? a : b;
       }
       """
     }
@@ -156,4 +179,13 @@ class window.Bitonic
   getOutBuf: -> if trig then buffer1 else buffer2
 
   debugOutput: ->
-    console.log _.map avs.readPixels(@getInBuf()), (x) -> x / 255.0
+    out = ""
+    i = 0
+    for x in _.map(avs.readPixels(@getInBuf()), (x) -> x / 255.0)
+      out += x.toFixed(4) + "\t"
+      if i == 3
+        console.log out
+        out = ""
+        i = 0
+      else
+        i += 1
