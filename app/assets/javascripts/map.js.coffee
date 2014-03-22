@@ -18,37 +18,44 @@ indexToIcon = (index, type='') ->
 # program entry
 $ -> ymaps.ready ->
 
-  map = new ymaps.Map "map", {
-    center: [55.156150, 61.409150]
-    zoom: 13
-  }
+  avs = new AVS $("#display")[0]
 
-  fcm = new ShaderFCM $("#display")[0]
+  bitonic = new Bitonic avs: avs
+  bitonic.configure()
+  bitonic.sort()
+  bitonic.debugOutput()
 
-  receiveVenues (venues) ->
+  #map = new ymaps.Map "map", {
+    #center: [55.156150, 61.409150]
+    #zoom: 13
+  #}
 
-    fcm.configure {
-      data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
-    }
+  #fcm = new ShaderFCM avs: avs
 
-    fcm.improve()
-    fcm.improve()
-    fcm.improve()
-    fcm.improve()
+  #receiveVenues (venues) ->
 
-    weights = fcm.getWeights()
+    #fcm.configure {
+      #data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
+    #}
 
-    for i, venue of venues
+    #fcm.improve()
+    #fcm.improve()
+    #fcm.improve()
+    #fcm.improve()
 
-      cluster = 0
-      maxVal = 0
-      for j, weight of weights[i]
-        if weight > maxVal
-          maxVal = weight
-          cluster = j
+    #weights = fcm.getWeights()
 
-      mark = new ymaps.Placemark [venue.lat, venue.lng], {}, {
-        preset: indexToIcon(cluster)
-      }
-      map.geoObjects.add mark
+    #for i, venue of venues
+
+      #cluster = 0
+      #maxVal = 0
+      #for j, weight of weights[i]
+        #if weight > maxVal
+          #maxVal = weight
+          #cluster = j
+
+      #mark = new ymaps.Placemark [venue.lat, venue.lng], {}, {
+        #preset: indexToIcon(cluster)
+      #}
+      #map.geoObjects.add mark
 

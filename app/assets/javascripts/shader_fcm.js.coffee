@@ -52,8 +52,8 @@ class window.ShaderFCM
   # runtime
   trig = false
 
-  constructor: (elem, options = {}) ->
-    avs = new AVS elem
+  constructor: (options = {}) ->
+    avs = options.avs ? new AVS options.elem
 
   configure: (options = {}) ->
     conf.m     = options.m ? 2.0

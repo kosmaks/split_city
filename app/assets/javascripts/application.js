@@ -13,6 +13,7 @@
 //= require jquery
 //= require avs
 //= require shader_fcm
+//= require bitonic
 //= require underscore
 //= require jquery_ujs
 //= require turbolinks
