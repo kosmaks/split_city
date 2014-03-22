@@ -62,10 +62,8 @@ class window.ShaderFCM
     length     = array.length
 
     # align to power of 2
-    x = 1
-    while x*x < length then x *= 2
-    while array.length < (x*x) then array.push [0, 0, 1.0, 0]
-    size = [x, x]
+    size = Utils.alignToTexture length
+    Utils.fillRestWith array, (size[0] * size[1]), [0, 0, 1, 0]
     data = _.flatten(array)
 
     mainProg = avs.createProgram {
@@ -223,7 +221,7 @@ class window.ShaderFCM
     buffer  = []
     for x in weights by 4
       buffer.push x / 255.0
-      if clust == 3
+      if clust == conf.clust - 1
         result.push buffer
         buffer = []
         clust  = 0

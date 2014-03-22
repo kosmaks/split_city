@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require avs
+//= require utils
 //= require shader_fcm
 //= require bitonic
 //= require underscore
