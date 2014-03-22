@@ -39,7 +39,7 @@ $ -> ymaps.ready ->
 
   avs = new AVS $("#display")[0]
 
-  map = new ymaps.Map "map", {
+  window.map = map = new ymaps.Map "map", {
     center: [55.156150, 61.409150]
     zoom: 10
   }
@@ -53,11 +53,11 @@ $ -> ymaps.ready ->
       data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
     }
 
-    for i in [0...500]
-      fcm.improve()
+    fcm.improve() for x in [0..50]
 
     weights = fcm.getWeights()
     clusters = {}
+    polygons = []
 
     for i, venue of venues
 
@@ -80,35 +80,28 @@ $ -> ymaps.ready ->
         info.onEdge = index
       info.data.push [venue.lat, venue.lng]
 
-    console.log clusters
-
     for k, info of clusters
-
       edge = info.data[info.onEdge]
       info.data.splice info.onEdge
       info.data.sort Utils.crossComparator(edge)
-
       data = [edge, info.data[0]]
       i = 1
-
-      while i < info.data.length #and confirm('next')
+      while i < info.data.length
         j = data.length - 1
         point = info.data[i]
-
         comp = Utils.crossComparator(data[j])(data[j-1], point)
-        #console.log comp
-
         if comp > 0
           data.push(point)
           i += 1
         else
           data.pop()
+      polygons.push(data)
 
-      console.log data
-
+    for k, data of polygons
       line = new ymaps.Polygon [data, []], {}, {
         strokeWidth: 3,
         strokeColor: indexToColor(k)
         fillColor: indexToColor(k, '88')
       }
       map.geoObjects.add line
+
