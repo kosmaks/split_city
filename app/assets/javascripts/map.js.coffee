@@ -89,15 +89,17 @@ $ -> ymaps.ready ->
       info.category = _.max(_.values(info.categories), (x) -> x.count)
 
     for k, info of clusters
+
       edge = info.data[info.onEdge]
       info.data.splice info.onEdge
-      info.data.sort Utils.crossComparator(edge)
+      info.data.sort Utils.crossComparator(edge, 1e6)
+
       data = [edge, info.data[0]]
       i = 1
       while i < info.data.length
         j = data.length - 1
         point = info.data[i]
-        comp = Utils.crossComparator(data[j])(data[j-1], point)
+        comp = Utils.crossComparator(data[j], 1e6)(data[j-1], point)
         if comp >= 0
           data.push(point)
           i += 1
