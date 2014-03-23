@@ -1,5 +1,4 @@
 class window.VenueClusters
-  WORKER_URL = "/assets/workers/cluster_worker.js"
   worker = null
 
   opts = {
@@ -7,7 +6,7 @@ class window.VenueClusters
   }
 
   constructor: ->
-    worker = new Worker WORKER_URL
+    worker = new Worker SPLIT_CITY.workers.cluster_worker
 
   configure: (options = {}) ->
     opts.venues  = options.venues ? []
