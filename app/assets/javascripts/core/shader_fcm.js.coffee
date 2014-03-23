@@ -237,15 +237,9 @@ class window.ShaderFCM
         for k in [0...(conf.clust - 1)]
           perc = Math.random() * sum
           if perc > sum then perc = sum
-          randomData.push perc
-          randomData.push 0
-          randomData.push 0
-          randomData.push 0
+          randomData.push perc, 0, 0, 0
           sum -= perc
-        randomData.push sum
-        randomData.push 0
-        randomData.push 0
-        randomData.push 0
+        randomData.push sum, 0, 0, 0
     randomData
 
   readBuffer: (buf) ->

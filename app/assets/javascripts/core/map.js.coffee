@@ -1,3 +1,5 @@
+#= require_tree .
+
 # data
 
 avs      = null

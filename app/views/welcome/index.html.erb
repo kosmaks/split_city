@@ -40,7 +40,7 @@
   </div>
 </div>
 
-<% content_for :scripts do %>
+<% content_for :headers do %>
   <script type='text/javascript'>
     window.SPLIT_CITY = {
       show_points: <%= raw params.include?(:show_points).to_json %>,
@@ -52,6 +52,8 @@
       }
     }
   </script>
+<% end %>
+
+<% content_for :scripts do %>
   <%= javascript_include_tag "http://api-maps.yandex.ru/2.0-stable/?load=package.full&lang=ru-RU" %>
-  <%= javascript_include_tag "map" %>
 <% end %>
