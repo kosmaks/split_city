@@ -40,3 +40,6 @@ VenueCategory.create(name: "Travel & Transport")
              .create_fsq_venue_category(name: "Travel & Transport", \
                                         category_id: "4d4b7105d754a06378d81259")
 
+City.create(name: "Chelyabinks", 
+            borders: [[55.045429, 61.247772], [55.375323, 61.566752]])
+

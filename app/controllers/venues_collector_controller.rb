@@ -1,4 +1,5 @@
 class VenuesCollectorController < ApplicationController
+  include GeoHelper
 
   def update_venues_from_fsq
     config = SPLIT_CITY_GIS_CONFIG['fsq']
@@ -8,31 +9,49 @@ class VenuesCollectorController < ApplicationController
 
     categories     = VenueCategory.all.map{ |x| x.fsq_venue_category }
     category_tree  = client.venue_categories
+    qnts = getQuadrants
+    qnts.each do |x|
+      categories.each do |y|
+        sw, ne = x
+        venues = client.search_venues(:sw => sw,
+                                    :limit => 50, 
+                                    :intent => 'browse',
+                                    :category_id => y.category_id,
+                                    :ne => ne).venues
+        venues.each do |venue|
+          next if venue.location.nil?
+          next if venue.categories.nil? or venue.categories.empty?
 
-    categories.each do |x|
-      venues = client.search_venues(:near => "Chelyabinsk", \
-                                    :limit => 50, \
-                                    :categoryId => x.category_id).venues
-      venues.each do |venue|
-        next if venue.location.nil?
-        next if venue.categories.nil? or venue.categories.empty?
-
-        Venue.where(:venue_id => venue.id)
-             .first_or_create
-             .update(:name => venue.name,
-                     :lat  => venue.location.lat,
-                     :lng  => venue.location.lng)
-        v = Venue.where(:venue_id => venue.id).first
-        venue.categories.each do |y|
-          parent_category = find_parent_category(category_tree, y)
-          next if parent_category.nil?
+          Venue.where(:venue_id => venue.id)
+               .first_or_create
+               .update(:name => venue.name,
+                       :lat  => venue.location.lat,
+                       :lng  => venue.location.lng)
+          v = Venue.where(:venue_id => venue.id).first
+          venue.categories.each do |y|
+            parent_category = find_parent_category(category_tree, y)
+            next if parent_category.nil?
           
-          category = categories.find { |cat| cat.category_id == parent_category.id}.venue_category
+            category = categories.find { |cat| cat.category_id == parent_category.id}
+            next if category.nil?
 
-          v.categories << category
-          v.save
+            v.categories << category.venue_category
+            v.save
+          end
         end
       end
+    end
+  end
+
+  def saveQuadrants
+    cities = City.all 
+    #cities.each do |city|
+      #qnts = quadrants city.borders, 100.first
+    #end
+    qnts = cities.map{ |x| quadrants x.borders, 100 }.first
+                 .map{ |x| x.map { |y| y * ","} }
+    qnts.each do |x|
+      #CollectorInfo.where(
     end
   end
 
@@ -53,5 +72,4 @@ class VenuesCollectorController < ApplicationController
     end
     false
   end
-
 end
