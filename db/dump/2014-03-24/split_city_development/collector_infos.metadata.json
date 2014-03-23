@@ -1,0 +1,1 @@
+{ "indexes" : [ { "v" : 1, "key" : { "_id" : 1 }, "ns" : "split_city_development.collector_infos", "name" : "_id_" } ] }

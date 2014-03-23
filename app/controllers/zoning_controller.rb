@@ -1,12 +1,15 @@
 class ZoningController < ApplicationController
+  include GeoHelper
+
   def debug
 
-    fcm = Mongoid::FCM.new element: Venue, result: Cluster
 
-    result = {
-      venues: fcm.run.map(&:value),
-      centers: fcm.compute_centers.map { |x| x['value'] }
-    }
+    #fcm = Mongoid::FCM.new element: Venue, result: Cluster
+
+    #result = {
+    #  venues: fcm.run.map(&:value),
+    #  centers: fcm.compute_centers.map { |x| x['value'] }
+    #}
     
     #result = Venue.all.map { |x| [x.lat, x.lng] }
     #result = Clust::FCM.new(result, 8).run
