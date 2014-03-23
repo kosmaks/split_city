@@ -2,22 +2,27 @@ class VenuesCollectorController < ApplicationController
   include GeoHelper
 
   def update_venues_from_fsq
-    config = SPLIT_CITY_GIS_CONFIG['fsq']
+    config      = SPLIT_CITY_GIS_CONFIG['fsq']
+    query_limit = config['query_limit'].to_i
     client = Foursquare2::Client.new(:client_id     => config['client_id'], 
                                      :client_secret => config['client_secret'], 
                                      :api_version   => config['api_version'])
 
     categories     = VenueCategory.all.map{ |x| x.fsq_venue_category }
     category_tree  = client.venue_categories
+
+    i = 0
+
     qnts = getQuadrants
     qnts.each do |x|
+      break if (i += 1) > query_limit
       categories.each do |y|
-        sw, ne = x
+        sw, ne = x.quadrant.map{ |x| x * "," }
         venues = client.search_venues(:sw => sw,
-                                    :limit => 50, 
-                                    :intent => 'browse',
-                                    :category_id => y.category_id,
-                                    :ne => ne).venues
+                                      :limit => 50, 
+                                      :intent => 'browse',
+                                      :category_id => y.category_id,
+                                      :ne => ne).venues
         venues.each do |venue|
           next if venue.location.nil?
           next if venue.categories.nil? or venue.categories.empty?
@@ -40,18 +45,34 @@ class VenuesCollectorController < ApplicationController
           end
         end
       end
+      x.latest_update = Time.now
+      x.save
     end
+  end
+
+  def getQuadrants
+    config      = SPLIT_CITY_GIS_CONFIG['fsq']
+    update_freq = config['update_frequency'].to_i
+
+    quadrants = CollectorInfo.all
+    quadrants.reject{|x| (Time.now - x.latest_update) < update_freq}
   end
 
   def saveQuadrants
     cities = City.all 
-    #cities.each do |city|
-      #qnts = quadrants city.borders, 100.first
-    #end
-    qnts = cities.map{ |x| quadrants x.borders, 100 }.first
-                 .map{ |x| x.map { |y| y * ","} }
-    qnts.each do |x|
-      #CollectorInfo.where(
+    cities.each do |city|
+      next if !city.nil? or city.count > 0
+      qnts = quadrants city.borders, 100
+      qnts.each do |qnt|
+        collector_info = CollectorInfo.create(:quadrant => qnt)
+
+        c = City.where(_id: city._id).first
+        c.collector_info.push(collector_info)
+        c.save
+
+        collector_info.city = c
+        collector_info.save
+      end
     end
   end
 
