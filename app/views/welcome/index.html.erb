@@ -1,7 +1,11 @@
-<nav class='navbar navbar-fixed-top navbar-inverse'>
+<nav class='navbar navbar-fixed-top navbar-inverse' id='navbar'>
   <div class='container'>
     <div class='navbar-header'>
       <%= link_to 'Split City', '/', class: 'navbar-brand' %>
+    </div>
+
+    <div class='navbar-text navbar-right loading'>
+      Loading <span></span>...
     </div>
 
     <div class='navbar-collapse collapse'>
@@ -70,7 +74,7 @@
                  class="m-parameter span2 slider-input"
                  value=""
                  data-slider-min="2"
-                 data-slider-max="30"
+                 data-slider-max="32"
                  data-slider-step="5"
                  data-slider-value="2"
                  data-slider-orientation="horizontal"

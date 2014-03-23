@@ -8,6 +8,9 @@ class window.Router extends Backbone.Router
     'clust-stats': 'clustStats'
   }
 
+  initialize: ->
+    @navbarView = new NavbarView
+
   map: ->
     @mapView ?= new window.MapView
     @switchView @mapView

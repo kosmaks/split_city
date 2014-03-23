@@ -49,7 +49,7 @@ class window.MapView extends Backbone.View
     return unless clust?
     @map.clear()
     for k, info of clust
-      if @showRegions.is(':checked')
+      if @showRegions.attr('checked')?
         @map.drawCluster k, info
 
   changeClusterCount: (e) ->
