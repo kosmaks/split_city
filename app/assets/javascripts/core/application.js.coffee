@@ -26,10 +26,12 @@ class window.Application
   ready: ->
     avs.ready()
 
-  receiveVenues: (source = SPLIT_CITY.venue_source) ->
-    $.get source, {}, (data) ->
+  receiveVenues: (source = SPLIT_CITY.venue_sources[0].route) ->
+    @trigger 'loading'
+    $.get source, {}, (data) =>
       refresh = true
       venues = data
+      @trigger 'loaded'
 
   run: ->
     refresh = venues != null
@@ -37,6 +39,9 @@ class window.Application
     @mainLoop()
     if venues == null
       @receiveVenues()
+
+  forceRefresh: ->
+    refresh = true
 
   kill: ->
     stop = true
@@ -63,6 +68,7 @@ class window.Application
       setTimeout (=> @mainLoop()), TIMEOUT
 
   update: ->
+    @trigger 'loading'
     fcm.configure {
       clust: Math.pow(2, size)
       data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
@@ -78,3 +84,4 @@ class window.Application
     clustersWorker.process (res) =>
       clusters = res.clusters
       @trigger 'sync', clusters
+      @trigger 'loaded'

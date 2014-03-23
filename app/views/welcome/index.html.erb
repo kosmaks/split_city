@@ -82,12 +82,18 @@
       </div>
 
       <div class='col-md-4'>
-        <h3>Places</h3>
+        <h3>View options</h3>
         <p>
-          <input type='text' class='form-control' placeholder='Where do you want to split?'/>
-        </p>
-        <p class='right'>
-          <a class='btn btn-primary do-search' href='#' role='button'>Search</a>
+          <div class='checkbox'>
+            <label>
+              <input type='checkbox' class='do-show-regions' checked='checked' /> Regions
+            </label>
+          </div>
+          <div class='checkbox'>
+            <label>
+              <input type='checkbox' class='do-show-venues' /> Venues
+            </label>
+          </div>
         </p>
       </div>
 
@@ -97,9 +103,7 @@
           Choose one of existing sources.
         </p>
         <p>
-          <div class='list-group'>
-            <a href='#' class='list-group-item active'>Foursquare</a>
-            <a href='#' class='list-group-item'>Random data</a>
+          <div class='list-group sources-container'>
           </div>
         </p>
       </div>
@@ -128,10 +132,10 @@
 <% content_for :headers do %>
   <script type='text/javascript'>
     window.SPLIT_CITY = {
-      show_points: <%= raw params.include?(:show_points).to_json %>,
-      venue_source: <%= raw (params.include?(:random) \
-                            ? "zoning/random/#{params[:random]}" \
-                            : "zoning/index").to_json %>,
+      venue_sources: [
+         { name: 'Foursquare', route: 'zoning/index' },
+         { name: 'Random', route: 'zoning/random/1000' },
+      ],
       workers: {
         cluster_worker: <%= raw javascript_path("workers/cluster_worker.js").to_json %>
       }
