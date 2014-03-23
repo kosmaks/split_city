@@ -12,12 +12,14 @@
 //
 //= require jquery
 //= require bootstrap
+//= require underscore
+//= require backbone
 //= require avs
 //= require utils
 //= require venue_clusters
 //= require profiler
 //= require shader_fcm
-//= require underscore
 //= require jquery_ujs
 //= require turbolinks
 //= require_tree ./lib
+//= require_tree ./backbone
