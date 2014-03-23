@@ -12,7 +12,7 @@ clustersWorker = new VenueClusters
 # steps
 
 receiveVenues = (cb) ->
-  $.get 'zoning/index', {}, (data) ->
+  $.get SPLIT_CITY.venue_source, {}, (data) ->
     venues = data
     cb?()
 
@@ -21,8 +21,8 @@ initProfiler = ->
   profiler.begin()
 
 initUI = (cb) ->
+  # GL Context
   avs = new AVS $("#display")[0]
-  
   unless avs.ready()
     $('#glErrorModal').modal({
       backdrop: 'static',
@@ -30,12 +30,12 @@ initUI = (cb) ->
     })
     return false
 
+  # UI Elements
   $(".clusters-count").slider({
     formater: (x) -> Math.pow(2, x) + " clusters"
   }).on('slide', handleSlide)
 
-  fcm = new ShaderFCM avs: avs
-
+  # Yandex maps
   ymaps.ready ->
     map = new ymaps.Map "map", {
       center: [55.156150, 61.409150]
@@ -53,6 +53,7 @@ splitCity = ->
   else
     lastSize = size
 
+    fcm ?= new ShaderFCM avs: avs
     fcm.configure {
       clust: Math.pow(2, size)
       data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])

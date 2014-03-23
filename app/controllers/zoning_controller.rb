@@ -38,7 +38,12 @@ class ZoningController < ApplicationController
   def random
     data = []
     cats = VenueCategory.all.to_a
-    1000.times do
+
+    count = params[:count].to_i
+    count = (count < 0) ? 0 : \
+            (count > 20000) ? 20000 : count
+
+    count.times do
       cat = cats[rand(cats.count)]
       data << {
         lat: 55.15 + (0.1 * rand - 0.05),

@@ -42,6 +42,9 @@
 <% content_for :scripts do %>
   <script type='text/javascript'>
     window.SPLIT_CITY = {
+      venue_source: <%= raw (params.include?(:random) \
+                            ? "zoning/random/#{params[:random]}" \
+                            : "zoning/index").to_json %>,
       workers: {
         cluster_worker: <%= raw javascript_path("workers/cluster_worker.js").to_json %>
       }
