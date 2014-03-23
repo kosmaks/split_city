@@ -62,6 +62,8 @@ GEM
       faraday_middleware (>= 0.8)
       hashie (>= 1.0, < 3.0.0)
     hashie (2.0.5)
+    highcharts-rails (3.0.10)
+      railties (>= 3.1)
     hike (1.2.3)
     i18n (0.6.9)
     jbuilder (1.5.3)
@@ -147,6 +149,7 @@ DEPENDENCIES
   coffee-rails (~> 4.0.0)
   faraday (~> 0.8.9)
   foursquare2 (~> 1.9.8)
+  highcharts-rails
   jbuilder (~> 1.2)
   jquery-rails
   mongoid!
