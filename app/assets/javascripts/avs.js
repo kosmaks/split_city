@@ -12,11 +12,16 @@
       if (element != null) {
         el = element;
         gl = el.getContext('experimental-webgl');
-        gl.viewportWidth = el.width;
-        gl.viewportHeight = el.height;
-        gl.getExtension('OES_texture_float');
+        if (gl != null) {
+          gl.viewportWidth = el.width;
+          gl.viewportHeight = el.height;
+          gl.getExtension('OES_texture_float');
+        }
       }
     }
+    prototype.ready = function(){
+      return gl != null;
+    };
     prototype.gl = function(){
       return gl;
     };

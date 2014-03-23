@@ -21,11 +21,19 @@ initProfiler = ->
   profiler.begin()
 
 initUI = (cb) ->
+  avs = new AVS $("#display")[0]
+  
+  unless avs.ready()
+    $('#glErrorModal').modal({
+      backdrop: 'static',
+      keyboard: false
+    })
+    return false
+
   $(".clusters-count").slider({
     formater: (x) -> Math.pow(2, x) + " clusters"
   }).on('slide', handleSlide)
 
-  avs = new AVS $("#display")[0]
   fcm = new ShaderFCM avs: avs
 
   ymaps.ready ->
