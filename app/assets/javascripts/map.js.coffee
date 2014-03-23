@@ -63,6 +63,13 @@ splitCity = ->
         map.geoObjects.remove x
 
       for k, data of clusters
+
+        #for venue in data.venues
+          #mark = new ymaps.Placemark [venue.lat, venue.lng], {
+            #hintContent: venue.name
+          #}
+          #map.geoObjects.add mark
+
         line = new ymaps.Polygon [data.polygon, []], {
           hintContent: data.category.name
         }, {

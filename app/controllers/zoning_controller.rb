@@ -23,10 +23,10 @@ class ZoningController < ApplicationController
     .reject { |v| v.categories.count == 0 }
     .reject { |v| v.categories.first.name == 'Event' }
     .map do |venue|
-      category = venue.categories.first
       json = venue.as_json
-      json[:category_id] = category.id.to_s
-      json[:category_name] = category.name
+      json[:categories] = venue.categories.map do |cat|
+        { name: cat.name, id: cat.id.to_s }
+      end
       json
     end
 

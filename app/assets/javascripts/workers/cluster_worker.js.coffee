@@ -64,11 +64,13 @@ splitClusters = (venues, weights) ->
     info = clusters[cluster]
     info.data.push [venue.lat, venue.lng]
     info.venues.push venue
-    info.categories[venue.category_id] ?= {
-      count: 0
-      name: venue.category_name
-    }
-    info.categories[venue.category_id].count += 1
+
+    for cat in venue.categories
+      info.categories[cat.id] ?= {
+        count: 0
+        name: cat.name
+      }
+      info.categories[cat.id].count += 1
   clusters
 
 main = ->
