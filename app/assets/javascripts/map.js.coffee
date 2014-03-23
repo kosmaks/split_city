@@ -49,7 +49,7 @@ $ -> ymaps.ready ->
   receiveVenues (venues) ->
 
     fcm.configure {
-      clust: 16
+      clust: 4
       data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
     }
 
