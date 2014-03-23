@@ -26,11 +26,34 @@ class ZoningController < ApplicationController
     .reject { |v| v.categories.count == 0 }
     .reject { |v| v.categories.first.name == 'Event' }
     .map do |venue|
-      category = venue.categories.first
       json = venue.as_json
-      json[:category_id] = category.id.to_s
-      json[:category_name] = category.name
+      json[:categories] = venue.categories.map do |cat|
+        { name: cat.name, id: cat.id.to_s }
+      end
       json
+    end
+
+    respond_to do |format|
+      format.json { render json: data }
+    end
+  end
+
+  def random
+    data = []
+    cats = VenueCategory.all.to_a
+
+    count = params[:count].to_i
+    count = (count < 0) ? 0 : \
+            (count > 20000) ? 20000 : count
+
+    count.times do
+      cat = cats[rand(cats.count)]
+      data << {
+        lat: 55.15 + (0.1 * rand - 0.05),
+        lng: 61.37 + (0.1 * rand - 0.05),
+        name: 'Random',
+        categories: [ { name: cat.name, id: cat.id.to_s } ]
+      }
     end
 
     respond_to do |format|

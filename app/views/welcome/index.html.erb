@@ -6,12 +6,54 @@
   </div>
 </nav>
 
-<main class='container'>
+<article>
+  <h1 class='page-header'>Map</h1>
   <div id="map"></div>
-  <canvas id='display'></canvas>
-</main>
+
+  <p>
+    <input type="text"
+           class="clusters-count span2"
+           value=""
+           data-slider-min="1"
+           data-slider-max="6"
+           data-slider-step="1"
+           data-slider-value="2"
+           data-slider-orientation="horizontal"
+           data-slider-tooltip="show" />
+  </p>
+</article>
+
+<!-- Hidden canvas for GL context -->
+<canvas id='display'></canvas>
+
+<!-- Gl error modal -->
+<div class="modal fade" id="glErrorModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title" id="myModalLabel">Unsupported browser!</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :headers do %>
+  <script type='text/javascript'>
+    window.SPLIT_CITY = {
+      show_points: <%= raw params.include?(:show_points).to_json %>,
+      venue_source: <%= raw (params.include?(:random) \
+                            ? "zoning/random/#{params[:random]}" \
+                            : "zoning/index").to_json %>,
+      workers: {
+        cluster_worker: <%= raw javascript_path("workers/cluster_worker.js").to_json %>
+      }
+    }
+  </script>
+<% end %>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "http://api-maps.yandex.ru/2.0-stable/?load=package.full&lang=ru-RU" %>
-  <%= javascript_include_tag "map" %>
 <% end %>

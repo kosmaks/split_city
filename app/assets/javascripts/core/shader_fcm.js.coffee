@@ -215,18 +215,18 @@ class window.ShaderFCM
     doubleBuffers["#{category}#{num}"]
 
   getWeights: (data) ->
-    result  = []
-    weights = avs.readPixels(@getOutBuf('clust'))
-    clust   = 0
-    buffer  = []
+    result   = []
+    weights  = avs.readPixels(@getOutBuf('clust'))
+    curClust = 0
+    buffer   = []
     for x in weights by 4
       buffer.push x / 255.0
-      if clust == conf.clust - 1
+      if curClust == conf.clust - 1
         result.push buffer
         buffer = []
-        clust  = 0
+        curClust  = 0
       else
-        clust += 1
+        curClust += 1
     result
 
   generateRandomWeights: ->
@@ -237,15 +237,9 @@ class window.ShaderFCM
         for k in [0...(conf.clust - 1)]
           perc = Math.random() * sum
           if perc > sum then perc = sum
-          randomData.push perc
-          randomData.push 0
-          randomData.push 0
-          randomData.push 0
+          randomData.push perc, 0, 0, 0
           sum -= perc
-        randomData.push sum
-        randomData.push 0
-        randomData.push 0
-        randomData.push 0
+        randomData.push sum, 0, 0, 0
     randomData
 
   readBuffer: (buf) ->
