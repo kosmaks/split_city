@@ -12,8 +12,8 @@
             <b class='caret'></b>
           </a>
           <ul class='dropdown-menu'>
-            <li><a href='#'>Map</a></li>
-            <li><a href='#'>Statistics</a></li>
+            <li><a href='#map'>Map</a></li>
+            <li><a href='#clust-stats'>Statistics</a></li>
           </ul>
         </li>
       </ul>
@@ -21,7 +21,15 @@
   </div>
 </nav>
 
-<div id='clust-stats-layout'>
+<script type='text/template' id='categories-chart-template'>
+  <div class='col-md-4'>
+    <p>
+      <div class='categories-chart'></div>
+    </p>
+  </div>
+</script>
+
+<div id='clust-stats-layout' class='layout'>
   <div class='container'>
     <h1>Regions statistics</h1>
 
@@ -31,7 +39,7 @@
 
 </div>
 
-<div id='map-layout' class='fade'>
+<div id='map-layout' class='layout'>
   <div id="map"></div>
 
   <div class='container'>
@@ -46,7 +54,7 @@
         <p>
           <label class='col-md-5 control-label'># of clusters</label>
           <input type="text"
-                 class="clusters-count col-md-9"
+                 class="clusters-count span2 slider-input"
                  value=""
                  data-slider-min="1"
                  data-slider-max="6"
@@ -59,7 +67,7 @@
         <p>
           <label class='col-md-5 control-label'><i>M</i> parameter</label>
           <input type="text"
-                 class="m-parameter col-md-9"
+                 class="m-parameter span2 slider-input"
                  value=""
                  data-slider-min="2"
                  data-slider-max="30"

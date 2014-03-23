@@ -1,7 +1,18 @@
 class window.Router extends Backbone.Router
   routes: {
-    '': 'index'
+    '': 'map'
+    'map': 'map'
+    'clust-stats': 'clustStats'
   }
 
-  index: ->
-    console.log 'Page loaded'
+  map: ->
+    @mapView ?= new window.MapView
+    @switchView @mapView
+
+  clustStats: ->
+    @clustStatsView ?= new window.ClustStatsView
+    @switchView @clustStatsView
+
+  switchView: (view) ->
+    $('.layout').hide()
+    view.$el.show()

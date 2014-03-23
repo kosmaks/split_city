@@ -4,6 +4,10 @@ body {
   padding-top: 50px;
 }
 
+.layout {
+  display: none;
+}
+
 #map {
   width: 100%;
   height: 500px;
@@ -14,6 +18,9 @@ body {
 }
 
 #map-layout {
+  .slider-input {
+    width: 150px;
+  }
 
   .slider-selection {
     background: #1155FF;
