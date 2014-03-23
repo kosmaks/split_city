@@ -8,8 +8,22 @@
 
 <main class='container'>
   <div id="map"></div>
-  <canvas id='display'></canvas>
+
+  <p>
+    <input type="text"
+           class="clusters-count span2"
+           value=""
+           data-slider-min="1"
+           data-slider-max="6"
+           data-slider-step="1"
+           data-slider-value="2"
+           data-slider-orientation="horizontal"
+           data-slider-tooltip="show" />
+  </p>
 </main>
+
+<!-- Hidden canvas for GL context -->
+<canvas id='display'></canvas>
 
 <% content_for :scripts do %>
   <%= javascript_include_tag "http://api-maps.yandex.ru/2.0-stable/?load=package.full&lang=ru-RU" %>

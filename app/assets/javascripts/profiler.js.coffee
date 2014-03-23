@@ -16,10 +16,8 @@ class window.Profiler
     }
     checkpoint = (new Date).getTime()
 
-  end: (title="") ->
-    @checkpoint title
+  end: ->
     total = (new Date).getTime() - startpoint
-
     console.log '--- Profile Results ---'
     for point in points
       console.log point.title + ":\t" + point.time.toFixed(5)

@@ -19,4 +19,4 @@
 //= require underscore
 //= require jquery_ujs
 //= require turbolinks
-//= require_dir ./lib
+//= require_tree ./lib
