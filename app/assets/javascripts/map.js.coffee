@@ -38,66 +38,50 @@ indexToColor = (index, extra='') ->
 $ -> ymaps.ready ->
 
   avs = new AVS $("#display")[0]
+  profiler = new Profiler
+  profiler.begin()
 
   window.map = map = new ymaps.Map "map", {
     center: [55.156150, 61.409150]
     zoom: 10
   }
 
+  profiler.checkpoint "Created map"
+
   fcm = new ShaderFCM avs: avs
 
   receiveVenues (venues) ->
+
+    profiler.checkpoint "Received venues"
 
     fcm.configure {
       clust: 4
       data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
     }
 
+    profiler.checkpoint "Configured fcm"
+
     fcm.improve() for x in [0..50]
 
+    profiler.checkpoint "Improved results"
+
     weights = fcm.getWeights()
-    clusters = {}
-    numOfClusters = 0
 
-    for i, venue of venues
-      cluster = 0
-      maxVal = 0
-      for j, weight of weights[i]
-        if weight > maxVal
-          maxVal = weight
-          cluster = j
+    clusters = new VenueClusters
+    clusters.configure {
+      venues: venues
+      weights: weights
+    }
 
-      unless clusters[cluster]
-        numOfClusters += 1
-        clusters[cluster] = {
-          data: [],
-          size: 0,
-          categories: {}
+    clusters.process (res) ->
+      for k, data of res.clusters
+        line = new ymaps.Polygon [data.polygon, []], {
+          hintContent: data.category.name
+        }, {
+          strokeWidth: 3,
+          strokeColor: indexToColor(k)
+          fillColor: indexToColor(k, '88')
         }
-      info = clusters[cluster]
+        map.geoObjects.add line
 
-      index = info.data.length
-      info.data.push [venue.lat, venue.lng]
-
-      info.categories[venue.category_id] ?= {
-        count: 0,
-        name: venue.category_name
-      }
-      info.categories[venue.category_id].count += 1
-
-    for k, info of clusters
-      info.category = _.max(_.values(info.categories), (x) -> x.count)
-
-    for k, info of clusters
-      info.polygon = Utils.grahamScan info.data
-
-    for k, data of clusters
-      line = new ymaps.Polygon [data.polygon, []], {
-        hintContent: data.category.name
-      }, {
-        strokeWidth: 3,
-        strokeColor: indexToColor(k)
-        fillColor: indexToColor(k, '88')
-      }
-      map.geoObjects.add line
-
+      profiler.end "Drawn clusters"
