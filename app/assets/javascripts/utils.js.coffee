@@ -37,7 +37,6 @@ window.Utils = {
     a = Utils.shiftExtendVector origin, x, mult
     b = Utils.shiftExtendVector origin, y, mult
     cross = Utils.cross(a, b)
-    console.log cross
     
     if (cross[2] == 0) then 0 else
       if (cross[2] > 0) then 1 else -1
@@ -61,7 +60,6 @@ window.Utils = {
     data = [edge, src[0]]
     for i in [1...src.length]
       point = src[i]
-      console.log i
       while data.length > 2 and
         Utils.crossComparator(data[data.length-1], 1e6)(data[data.length-2], point) <= 0
           data.pop()
