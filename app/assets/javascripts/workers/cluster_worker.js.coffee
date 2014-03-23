@@ -58,18 +58,29 @@ splitClusters = (venues, weights) ->
       data: [],
       venues: [],
       size: 0,
+      minWeight: null,
+      maxWeight: null,
       categories: {}
+      categoriesCount: 0
     }
+
 
     info = clusters[cluster]
     info.data.push [venue.lat, venue.lng]
     info.venues.push venue
+    info.size += 1
+
+    if info.minWeight == null or info.minWeight > maxVal
+      info.minWeight = maxVal
+    if info.maxWeight == null or info.maxWeight < maxVal
+      info.maxWeight = maxVal
 
     for cat in venue.categories
       info.categories[cat.id] ?= {
         count: 0
         name: cat.name
       }
+      info.categoriesCount += 1
       info.categories[cat.id].count += 1
   clusters
 

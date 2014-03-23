@@ -41,3 +41,17 @@ body {
 .right {
   text-align: right;
 }
+
+.color-icon {
+  width: 1.3em;
+  height: 1.3em;
+  border: 1px solid #ccc;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.cluster-info {
+  td {
+    width: 50%;
+  }
+}

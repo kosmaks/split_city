@@ -25,10 +25,10 @@ class window.MapView extends Backbone.View
 
     @map = new YandexMapsView {
       element: "map"
-      ready: =>
-        split_city.app.on 'sync', @update, @
-        @update()
     }
+    @map.render =>
+      split_city.app.on 'sync', @update, @
+      @update()
 
   initVenueSources: ->
     @venueSourceViews = _.map(SPLIT_CITY.venue_sources, (source) =>
@@ -51,6 +51,8 @@ class window.MapView extends Backbone.View
     for k, info of clust
       if @showRegions.attr('checked')?
         @map.drawCluster k, info
+
+  tryInitMap: ->
 
   changeClusterCount: (e) ->
     split_city.app.setNumOfClusters e.value

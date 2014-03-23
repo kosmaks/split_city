@@ -1,15 +1,24 @@
 class window.CategoriesChartView extends Backbone.View
 
-  initialize: ->
-    @info = options.info ? {
-      title: "Unkonwn"
-      categories: []
-    }
+  initialize: (options) ->
+    @title = options.title ? "Unknown"
+    @categories = options.categories ? []
+    @k = options.k ? 0
+    @info = options.info ? {}
 
     @$el = $ $("#categories-chart-template").html()
     @chart = @$el.find('.categories-chart')
+    @colorOnMap = @$el.find('.color-icon')
+    @numOfVenues = @$el.find('.number-of-venues')
+    @minWeight = @$el.find('.min-weight')
+    @maxWeight = @$el.find('.max-weight')
 
   render: ->
+    @colorOnMap.css 'background', Utils.indexToColor(@k)
+    @minWeight.text (100 * @info.minWeight).toFixed(2) + "%"
+    @maxWeight.text (100 * @info.maxWeight).toFixed(2) + "%"
+    @numOfVenues.text @info.size
+
     @chart.html('').highcharts {
 
       chart: {
@@ -18,7 +27,7 @@ class window.CategoriesChartView extends Backbone.View
         plotShadow: false
       }
 
-      title: text: @info.title
+      title: text: @title
 
       plotOptions: pie: {
         allowPointSelect: true
@@ -34,7 +43,7 @@ class window.CategoriesChartView extends Backbone.View
       series: [{
         type: 'pie'
         name: ''
-        data: @info.categories
+        data: @categories
       }]
 
     }

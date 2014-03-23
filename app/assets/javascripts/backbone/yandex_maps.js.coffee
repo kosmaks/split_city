@@ -3,16 +3,16 @@ class window.YandexMapsView extends Backbone.View
   map = null
 
   initialize: (options) ->
-    element = options.element ? "map"
-    center = options.center ? [55.156150, 61.409150]
-    zoom = options.zoom ? 11
+    @element = options.element ? "map"
+    @center = options.center ? [55.156150, 61.409150]
+    @zoom = options.zoom ? 11
 
-    ymaps.ready =>
-      map = new ymaps.Map element, {
-        center: center
-        zoom: zoom
-      }
-      options.ready?()
+  render: (cb) -> ymaps.ready =>
+    map = new ymaps.Map @element, {
+      center: @center
+      zoom: @zoom
+    }
+    cb?()
 
   clear: ->
     map.geoObjects.each (x) ->

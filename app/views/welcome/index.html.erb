@@ -10,26 +10,45 @@
 
     <div class='navbar-collapse collapse'>
       <ul class='nav navbar-nav'>
-        <li class='dropdown'>
-          <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
-            Regions
-            <b class='caret'></b>
-          </a>
-          <ul class='dropdown-menu'>
-            <li><a href='#map'>Map</a></li>
-            <li><a href='#clust-stats'>Statistics</a></li>
-          </ul>
-        </li>
+        <li><a href='#map'>Map</a></li>
+        <li><a href='#clust-stats'>Regions</a></li>
+        <li><a href='#'>Venues</a></li>
       </ul>
     </div>
   </div>
 </nav>
 
 <script type='text/template' id='categories-chart-template'>
-  <div class='col-md-4'>
-    <p>
-      <div class='categories-chart'></div>
-    </p>
+  <div class='thumbnail cluster-info'>
+    <div class='row'>
+      <div class='col-md-6'>
+        <p>
+          <div class='categories-chart'></div>
+        </p>
+      </div>
+      <div class='col-md-6'>
+        <table class='table table-stripped'>
+          <tbody>
+            <tr>
+              <td>Color on map:</td>
+              <td><a href='#map'><span class='color-icon'></span></a></td>
+            </tr>
+            <tr>
+              <td>Total number of venues:</td>
+              <td class='number-of-venues'>0</td>
+            </tr>
+            <tr>
+              <td>Minimum venue percent:</td>
+              <td class='min-weight'></td>
+            </tr>
+            <tr>
+              <td>Maximum venue percent:</td>
+              <td class='max-weight'></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </script>
 
@@ -37,7 +56,8 @@
   <div class='container'>
     <h1>Regions statistics</h1>
 
-    <div class='row'>
+    <div class='regions'>
+      Waiting for content...
     </div>
   </div>
 
