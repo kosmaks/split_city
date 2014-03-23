@@ -49,7 +49,7 @@ $ -> ymaps.ready ->
   receiveVenues (venues) ->
 
     fcm.configure {
-      clust: 4
+      clust: 16
       data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
     }
 
@@ -57,6 +57,7 @@ $ -> ymaps.ready ->
 
     weights = fcm.getWeights()
     clusters = {}
+    numOfClusters = 0
 
     for i, venue of venues
       cluster = 0
@@ -66,17 +67,16 @@ $ -> ymaps.ready ->
           maxVal = weight
           cluster = j
 
-      clusters[cluster] ?= {
-        onEdge: null,
-        data: [],
-        size: 0,
-        categories: {}
-      }
+      unless clusters[cluster]
+        numOfClusters += 1
+        clusters[cluster] = {
+          data: [],
+          size: 0,
+          categories: {}
+        }
       info = clusters[cluster]
 
       index = info.data.length
-      if not info.onEdge? or (info.data[info.onEdge][0] * 1e6 > venue.lat * 1e6)
-        info.onEdge = index
       info.data.push [venue.lat, venue.lng]
 
       info.categories[venue.category_id] ?= {
@@ -89,23 +89,7 @@ $ -> ymaps.ready ->
       info.category = _.max(_.values(info.categories), (x) -> x.count)
 
     for k, info of clusters
-
-      edge = info.data[info.onEdge]
-      info.data.splice info.onEdge
-      info.data.sort Utils.crossComparator(edge, 1e6)
-
-      data = [edge, info.data[0]]
-      i = 1
-      while i < info.data.length
-        j = data.length - 1
-        point = info.data[i]
-        comp = Utils.crossComparator(data[j], 1e6)(data[j-1], point)
-        if comp >= 0
-          data.push(point)
-          i += 1
-        else
-          data.pop()
-      info.polygon = data
+      info.polygon = Utils.grahamScan info.data
 
     for k, data of clusters
       line = new ymaps.Polygon [data.polygon, []], {
