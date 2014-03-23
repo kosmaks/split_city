@@ -49,7 +49,7 @@ $ -> ymaps.ready ->
   receiveVenues (venues) ->
 
     fcm.configure {
-      clust: 16
+      clust: 4
       data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
     }
 
@@ -57,10 +57,8 @@ $ -> ymaps.ready ->
 
     weights = fcm.getWeights()
     clusters = {}
-    polygons = []
 
     for i, venue of venues
-
       cluster = 0
       maxVal = 0
       for j, weight of weights[i]
@@ -71,7 +69,8 @@ $ -> ymaps.ready ->
       clusters[cluster] ?= {
         onEdge: null,
         data: [],
-        size: 0
+        size: 0,
+        categories: {}
       }
       info = clusters[cluster]
 
@@ -79,6 +78,15 @@ $ -> ymaps.ready ->
       if not info.onEdge? or (info.data[info.onEdge][0] * 1e6 > venue.lat * 1e6)
         info.onEdge = index
       info.data.push [venue.lat, venue.lng]
+
+      info.categories[venue.category_id] ?= {
+        count: 0,
+        name: venue.category_name
+      }
+      info.categories[venue.category_id].count += 1
+
+    for k, info of clusters
+      info.category = _.max(_.values(info.categories), (x) -> x.count)
 
     for k, info of clusters
       edge = info.data[info.onEdge]
@@ -90,15 +98,17 @@ $ -> ymaps.ready ->
         j = data.length - 1
         point = info.data[i]
         comp = Utils.crossComparator(data[j])(data[j-1], point)
-        if comp > 0
+        if comp >= 0
           data.push(point)
           i += 1
         else
           data.pop()
-      polygons.push(data)
+      info.polygon = data
 
-    for k, data of polygons
-      line = new ymaps.Polygon [data, []], {}, {
+    for k, data of clusters
+      line = new ymaps.Polygon [data.polygon, []], {
+        hintContent: data.category.name
+      }, {
         strokeWidth: 3,
         strokeColor: indexToColor(k)
         fillColor: indexToColor(k, '88')
