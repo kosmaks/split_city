@@ -3,25 +3,92 @@
     <div class='navbar-header'>
       <%= link_to 'Split City', '/', class: 'navbar-brand' %>
     </div>
+
+    <div class='navbar-collapse collapse'>
+      <ul class='nav navbar-nav'>
+        <li class='dropdown'>
+          <a href='#' class='dropdown-toggle' data-toggle='dropdown'>
+            Regions
+            <b class='caret'></b>
+          </a>
+          <ul class='dropdown-menu'>
+            <li><a href='#'>Map</a></li>
+            <li><a href='#'>Statistics</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
 
-<article>
-  <h1 class='page-header'>Map</h1>
+<div id='map-layout'>
   <div id="map"></div>
 
-  <p>
-    <input type="text"
-           class="clusters-count span2"
-           value=""
-           data-slider-min="1"
-           data-slider-max="6"
-           data-slider-step="1"
-           data-slider-value="2"
-           data-slider-orientation="horizontal"
-           data-slider-tooltip="show" />
-  </p>
-</article>
+  <div class='container'>
+    <div class='row'>
+
+      <div class='col-md-4'>
+        <h3>Clustering parameters</h3>
+        <p>
+          These parameters are related to clustering algorithm.
+          You can specify the way regions are determined.
+        </p>
+        <p>
+          <label class='col-md-5 control-label'># of clusters</label>
+          <input type="text"
+                 class="clusters-count col-md-9"
+                 value=""
+                 data-slider-min="1"
+                 data-slider-max="6"
+                 data-slider-step="1"
+                 data-slider-value="2"
+                 data-slider-orientation="horizontal"
+                 data-slider-tooltip="show" />
+        </p>
+
+        <p>
+          <label class='col-md-5 control-label'><i>M</i> parameter</label>
+          <input type="text"
+                 class="m-parameter col-md-9"
+                 value=""
+                 data-slider-min="2"
+                 data-slider-max="30"
+                 data-slider-step="5"
+                 data-slider-value="2"
+                 data-slider-orientation="horizontal"
+                 data-slider-tooltip="show" />
+        </p>
+        <p>
+          <a class='btn btn-default do-redraw' href='#' role='button'>Make new clusters</a>
+        </p>
+      </div>
+
+      <div class='col-md-4'>
+        <h3>Places</h3>
+        <p>
+          <input type='text' class='form-control' placeholder='Where do you want to split?'/>
+        </p>
+        <p class='right'>
+          <a class='btn btn-primary do-search' href='#' role='button'>Search</a>
+        </p>
+      </div>
+
+      <div class='col-md-4'>
+        <h3>Data sources</h3>
+        <p>
+          Choose one of existing sources.
+        </p>
+        <p>
+          <div class='list-group'>
+            <a href='#' class='list-group-item active'>Foursquare</a>
+            <a href='#' class='list-group-item'>Random data</a>
+          </div>
+        </p>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <!-- Hidden canvas for GL context -->
 <canvas id='display'></canvas>

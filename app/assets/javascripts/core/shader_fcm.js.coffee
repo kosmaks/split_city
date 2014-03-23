@@ -56,10 +56,12 @@ class window.ShaderFCM
     avs = options.avs ? new AVS options.elem
 
   configure: (options = {}) ->
-    conf.m     = options.m ? 2.0
+    conf.m     = options.m ? 100.0
     conf.clust = options.clust ? 4
     array      = options.data ? []
     length     = array.length
+
+    console.log conf.m
 
     # align to power of 2
     size = Utils.alignToTexture length

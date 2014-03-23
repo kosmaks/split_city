@@ -8,6 +8,8 @@ map      = null
 profiler = null
 venues   = null
 size     = 2
+m        = 2
+lastSize = null
 
 clustersWorker = new VenueClusters
 
@@ -35,7 +37,13 @@ initUI = (cb) ->
   # UI Elements
   $(".clusters-count").slider({
     formater: (x) -> Math.pow(2, x) + " clusters"
-  }).on('slide', handleSlide)
+  }).on('slide', (e) -> size = e.value)
+
+  $(".m-parameter").slider().on('slide', (e) ->
+    if m != e.value
+      m = e.value
+      lastSize = null
+  )
 
   # Yandex maps
   ymaps.ready ->
@@ -45,7 +53,6 @@ initUI = (cb) ->
     }
     cb?()
 
-lastSize = null
 splitCity = ->
   timeout = 100
 
@@ -59,6 +66,7 @@ splitCity = ->
     fcm.configure {
       clust: Math.pow(2, size)
       data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
+      m: m
     }
     fcm.improve() for x in [0..50]
 
@@ -99,7 +107,6 @@ splitCity = ->
 # ui callbacks
 
 handleSlide = (e) ->
-  size = Number e.value
 
 # program entry
 
