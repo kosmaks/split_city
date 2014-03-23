@@ -1,4 +1,7 @@
 class window.Router extends Backbone.Router
+
+  prevView = null
+
   routes: {
     '': 'map'
     'map': 'map'
@@ -14,5 +17,10 @@ class window.Router extends Backbone.Router
     @switchView @clustStatsView
 
   switchView: (view) ->
-    $('.layout').hide()
+    if prevView?
+      prevView.$el.hide()
+      prevView.navigatedFrom?()
+
+    prevView = view
     view.$el.show()
+    view.navigatedTo?()
