@@ -6,6 +6,7 @@ class window.Router extends Backbone.Router
     '': 'map'
     'map': 'map'
     'clust-stats': 'clustStats'
+    'venues-stats': 'venuesStats'
   }
 
   initialize: ->
@@ -18,6 +19,10 @@ class window.Router extends Backbone.Router
   clustStats: ->
     @clustStatsView ?= new window.ClustStatsView
     @switchView @clustStatsView
+
+  venuesStats: ->
+    @venuesStatsView ?= new window.VenuesStatsView
+    @switchView @venuesStatsView
 
   switchView: (view) ->
     if prevView?

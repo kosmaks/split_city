@@ -64,6 +64,7 @@ splitClusters = (venues, weights) ->
       categoriesCount: 0
     }
 
+    venue.weights = weights[i]
 
     info = clusters[cluster]
     info.data.push [venue.lat, venue.lng]

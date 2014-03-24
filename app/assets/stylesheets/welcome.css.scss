@@ -55,3 +55,12 @@ body {
     width: 50%;
   }
 }
+
+.venues-stats {
+  .title { width: 15%; }
+  .cats { width: 15%; }
+  .lat { width: 10%; }
+  .lng { width: 10%; }
+
+  .num { color: #115599; }
+}
