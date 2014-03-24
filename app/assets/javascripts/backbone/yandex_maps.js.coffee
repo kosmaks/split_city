@@ -12,6 +12,9 @@ class window.YandexMapsView extends Backbone.View
       center: @center
       zoom: @zoom
     }
+    map.controls.add 'mapTools'
+    map.controls.add 'typeSelector'
+    map.controls.add 'zoomControl'
     cb?()
 
   clear: ->
