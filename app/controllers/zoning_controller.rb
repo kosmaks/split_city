@@ -24,7 +24,6 @@ class ZoningController < ApplicationController
 
     data = Venue.all
     .reject { |v| v.categories.count == 0 }
-    .reject { |v| v.categories.first.name == 'Event' }
     .map do |venue|
       json = venue.as_json
       json[:categories] = venue.categories.map do |cat|
