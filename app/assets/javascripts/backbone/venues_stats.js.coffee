@@ -4,13 +4,16 @@ class window.VenuesStatsView extends Backbone.View
   initialize: ->
     @theaders = @$el.find('thead tr')
     @tbody = @$el.find('tbody')
-    @total = @$el.find('.total')
+    @total = @$el.find('total')
     split_city.app.on 'sync', @update, @
     @update()
 
+  navigatedTo: -> @active = true; @update()
+  navigatedFrom: -> @active = false
+
   update: ->
     clust = split_city.app.getClusters()
-    return unless clust?
+    return if not @active or not clust?
     @clear()
     for k, info of clust
       @addHeader "<span class='color-icon' style='background: #{Utils.indexToColor k};'>", "clust"

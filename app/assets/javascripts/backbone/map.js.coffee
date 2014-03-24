@@ -44,9 +44,12 @@ class window.MapView extends Backbone.View
       @sourcesContainer.append view.$el
     @venueSourceViews[0].setActive true
 
+  navigatedTo: -> @active = true; @update()
+  navigatedFrom: -> @active = false
+
   update: ->
     clust = split_city.app.getClusters()
-    return unless clust?
+    return if not @active or not clust?
     @map.clear()
     for k, info of clust
       if @showRegions.attr('checked')?

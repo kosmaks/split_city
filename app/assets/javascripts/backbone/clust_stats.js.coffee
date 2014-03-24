@@ -7,9 +7,12 @@ class window.ClustStatsView extends Backbone.View
     split_city.app.on 'sync', @update, @
     @update()
 
+  navigatedTo: -> @active = true; @update()
+  navigatedFrom: -> @active = false
+
   update: ->
     clust = split_city.app.getClusters()
-    return unless clust?
+    return if not @active or not clust?
     @clear()
     for k, info of clust
       @addInfo k, info
