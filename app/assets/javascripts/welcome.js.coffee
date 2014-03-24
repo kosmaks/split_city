@@ -1,8 +1,13 @@
 $ ->
-  window.split_city = {}
+  window.split_city = {
+    app: new Application
+  }
 
-  split_city.app = new Application
-  split_city.router = new Router
+  if not split_city.app.ready()
+    $("#glErrorModal").modal({ backdrop: 'static', keyboard: false })
 
-  Backbone.history.start()
-  split_city.app.run()
+  else
+    split_city.router = new Router
+
+    Backbone.history.start()
+    split_city.app.run()
