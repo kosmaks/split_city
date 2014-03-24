@@ -26,6 +26,10 @@ body {
     background: #1155FF;
   }
 
+  .slider .tooltip.top {
+    top: -30px !important;
+  }
+
   .slider-handle {
     opacity: 1;
     background: #FFF;
