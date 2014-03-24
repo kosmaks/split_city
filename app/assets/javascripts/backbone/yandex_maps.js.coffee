@@ -23,11 +23,22 @@ class window.YandexMapsView extends Backbone.View
     polygon = _.compact info.polygon
     return if polygon.length <= 1
 
-    line = new ymaps.Polygon [polygon, []], {
+    fig = new ymaps.Polygon [polygon, []], {
       hintContent: info.category.name
     }, {
       strokeWidth: 3,
       strokeColor: Utils.indexToColor(k)
       fillColor: Utils.indexToColor(k, '88')
+    }
+    map.geoObjects.add fig
+
+  drawLines: (k, info) ->
+    return unless info.venues?
+
+    line = new ymaps.Polyline _.map(info.venues, (x) -> [x.lat, x.lng]), {
+      hintContent: info.category.name
+    }, {
+      strokeWidth: 3,
+      strokeColor: Utils.indexToColor(k)
     }
     map.geoObjects.add line

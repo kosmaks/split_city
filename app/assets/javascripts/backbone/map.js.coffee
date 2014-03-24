@@ -52,8 +52,10 @@ class window.MapView extends Backbone.View
     return if not @active or not clust?
     @map.clear()
     for k, info of clust
-      if @showRegions.attr('checked')?
+      if @showRegions.is(':checked')
         @map.drawCluster k, info
+      if @showVenues.is(':checked')
+        @map.drawLines k, info
 
   tryInitMap: ->
 
