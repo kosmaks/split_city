@@ -1,6 +1,7 @@
 class window.YandexMapsView extends Backbone.View
 
   map = null
+  knownCats = []
 
   initialize: (options) ->
     @element = options.element ? "map"
@@ -43,5 +44,21 @@ class window.YandexMapsView extends Backbone.View
     }, {
       strokeWidth: 3,
       strokeColor: Utils.indexToColor(k)
+    }
+    map.geoObjects.add line
+
+  drawVenue: (k, cluster, venue) ->
+
+    category = venue.categories[0]
+    index = _.indexOf knownCats, category.id
+    if index < 0
+      knownCats.push category.id
+      index = knownCats.length - 1
+
+    line = new ymaps.Polyline [[venue.lat, venue.lng], [venue.lat + 0.0003, venue.lng]], {
+      hintContent: category.name
+    }, {
+      strokeWidth: 5,
+      strokeColor: Utils.indexToColor(index)
     }
     map.geoObjects.add line

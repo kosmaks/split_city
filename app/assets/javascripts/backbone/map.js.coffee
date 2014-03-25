@@ -9,6 +9,7 @@ class window.MapView extends Backbone.View
     'click .do-redraw': 'forceRefresh'
     'change .do-show-regions': 'update'
     'change .do-show-venues': 'update'
+    'change .do-show-venue-points': 'update'
   }
 
   initialize: ->
@@ -20,6 +21,7 @@ class window.MapView extends Backbone.View
     @sourcesContainer = @$el.find('.sources-container')
     @showRegions = @$el.find('.do-show-regions')
     @showVenues = @$el.find('.do-show-venues')
+    @showVenuePoints = @$el.find('.do-show-venue-points')
 
     @initVenueSources()
 
@@ -56,6 +58,9 @@ class window.MapView extends Backbone.View
         @map.drawCluster k, info
       if @showVenues.is(':checked')
         @map.drawLines k, info
+      if @showVenuePoints.is(':checked')
+        for venue in info.venues
+          @map.drawVenue k, info, venue
 
   tryInitMap: ->
 
