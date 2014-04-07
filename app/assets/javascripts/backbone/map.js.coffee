@@ -9,6 +9,7 @@ class window.MapView extends Backbone.View
     'click .do-redraw': 'forceRefresh'
     'change .do-show-regions': 'update'
     'change .do-show-venues': 'update'
+    'change .do-show-clusters': 'update'
     'change .do-show-venue-points': 'update'
   }
 
@@ -20,6 +21,7 @@ class window.MapView extends Backbone.View
 
     @sourcesContainer = @$el.find('.sources-container')
     @showRegions = @$el.find('.do-show-regions')
+    @showClusters = @$el.find('.do-show-clusters')
     @showVenues = @$el.find('.do-show-venues')
     @showVenuePoints = @$el.find('.do-show-venue-points')
 
@@ -56,6 +58,8 @@ class window.MapView extends Backbone.View
     for k, info of clust
       if @showRegions.is(':checked')
         @map.drawCluster k, info
+      if @showClusters.is(':checked')
+        @map.drawSimpleCluster k, info
       if @showVenues.is(':checked')
         @map.drawLines k, info
       if @showVenuePoints.is(':checked')

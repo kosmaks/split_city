@@ -38,7 +38,12 @@ findPolygons = (clusters) ->
   for k, info of clusters
     info.polygon = grahamScan info.data
 
-findMaxCategory = (clusters) ->
+findMaxCategory = (clusters) =>
+  #for _, info of clusters
+    #for venue in info.venues
+      #for cat in venue.categories
+        #for _, fillInfo of clusters
+          #fillInfo.category = cat
   for k, info of clusters
     for _, cat of info.categories
       if !info.category? or cat.count > info.category.count
@@ -78,11 +83,12 @@ splitClusters = (venues, weights) ->
 
     for cat in venue.categories
       info.categories[cat.id] ?= {
+        id: cat.id
         count: 0
         name: cat.name
       }
       info.categoriesCount += 1
-      info.categories[cat.id].count += 1
+      info.categories[cat.id].count += venue.weights[cluster]
   clusters
 
 main = ->
@@ -96,7 +102,7 @@ main = ->
 
   { clusters: clusters }
 
-@onmessage = (input) ->
+@onmessage = (input) =>
   @opts  = input.data
   @debug = -> console.log.apply console, arguments if opts.debug
   postMessage main()
