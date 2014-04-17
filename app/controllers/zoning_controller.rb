@@ -33,7 +33,12 @@ class ZoningController < ApplicationController
     end
 
     respond_to do |format|
-      format.json { render json: data }
+      format.json { 
+        render(json: {
+          venues: data,
+          cache: Cache.all.entries
+        })
+      }
     end
   end
 
@@ -56,7 +61,16 @@ class ZoningController < ApplicationController
     end
 
     respond_to do |format|
-      format.json { render json: data }
+      format.json { 
+        render(json: {
+          venues: data 
+        })
+      }
     end
+  end
+
+  def save
+    Cache.create data: params[:clusters], n: params[:n]
+    render json: {}
   end
 end

@@ -8,6 +8,7 @@ Gis::Application.routes.draw do
     
   get "zoning/index"         => "zoning#index"
   get "zoning/random/:count" => "zoning#random"
+  post "zoning/save" => "zoning#save"
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

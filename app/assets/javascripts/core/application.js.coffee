@@ -16,6 +16,7 @@ class window.Application
   refresh  = true
   stop     = false
   loading  = false
+  cache    = {}
 
   clustersWorker = new VenueClusters
 
@@ -31,7 +32,8 @@ class window.Application
     @setLoading 'venues'
     $.get source, {}, (data) =>
       refresh = true
-      venues = data
+      venues = data.venues
+      cache = _.object(_.map(data.cache, (x) -> [x.n, x.data])) if data.cache?
       @setLoaded()
 
   run: ->
@@ -69,24 +71,34 @@ class window.Application
       setTimeout (=> @mainLoop()), TIMEOUT
 
   update: ->
-    @setLoading 'weights'
-    fcm.configure {
-      clust: Math.pow(2, size)
-      data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
-      m: m
-    }
-    fcm.improve() for x in [0..50]
+    n = Math.pow(2, size)
 
-    clustersWorker.configure {
-      venues: venues
-      weights: fcm.getWeights()
-    }
-
-    @setLoading 'clusters'
-    clustersWorker.process (res) =>
-      clusters = res.clusters
+    if cache[n]?
+      console.log "taking from cache"
+      clusters = cache[n]
       @trigger 'sync', clusters
-      @setLoaded()
+    else
+      console.log "computing"
+      @setLoading 'weights'
+      fcm.configure {
+        clust: n
+        data: _.map(venues, (x) -> [x.lat * 1e6, x.lng * 1e6, 0, 0])
+        m: m
+      }
+      fcm.improve() for x in [0..50]
+
+      clustersWorker.configure {
+        venues: venues
+        weights: fcm.getWeights()
+      }
+
+      @setLoading 'clusters'
+      clustersWorker.process (res) =>
+        clusters = res.clusters
+        cache[n] = clusters
+        $.post('/zoning/save', { n: n, clusters: clusters })
+        @trigger 'sync', clusters
+        @setLoaded()
 
   setLoading: (text) ->
     @trigger 'loading', text
