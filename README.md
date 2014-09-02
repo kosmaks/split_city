@@ -5,7 +5,7 @@ This application analyzes companies in city and constructs the map of regions, b
 
 Demo: [http://splitcity.kosmaks.com](http://splitcity.kosmaks.com)
 
-![alt tag](https://github.com/kosmaks/spliy_city/blob/master/public/screen.png?raw=true)
+![alt tag](https://github.com/kosmaks/split_city/blob/master/public/screen.png?raw=true)
 
 How to run
 -------------
