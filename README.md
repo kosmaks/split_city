@@ -1,24 +1,17 @@
 Split City
 ----------
 
-Суть приложения заключается в анализе компаний в городе и построении карты районов, основываясь на его типе. Т.е. визуально отделить части города на развлекательный, спальный и т.п.
+This application analyzes companies in city and constructs the map of regions, based on it's type. Show visual regions for each market, residence, etc.
 
-Посмотреть текущую версию приложения можно [тут](http://splitcity.kosmaks.com).
+Demo: [http://splitcity.kosmaks.com](http://splitcity.kosmaks.com)
 
-Как запустить
+How to run
 -------------
 
-Для запуска требуется [MongoDB](http://www.mongodb.org) и ruby (>2.0.0). После установки как обычное rails приложение:
+You need [MongoDB](http://www.mongodb.org) and ruby (>2.0.0). Then just like any rails app:
 
 ```bash
 $ gem install bundler
 $ bundle install
 $ rails s
 ```
-
-Авторы
-------
-
-* Мария Скрынник - UI
-* Костюченко Максим - Логика
-* Соло Илья - База данных
